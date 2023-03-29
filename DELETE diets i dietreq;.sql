@@ -1,0 +1,9 @@
+DELETE FROM DietDays;
+DELETE FROM DietDishes;
+DELETE FROM Diets;
+--DELETE FROM DietRequirements;
+--DELETE FROM ProhibitedIngredients;
+--DELETE FROM ProhibitedTags;
+--DELETE FROM RequiredIngredients;
+--DELETE FROM RequiredTags;
+--DELETE FROM PortionTypes;
