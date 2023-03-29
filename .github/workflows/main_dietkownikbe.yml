@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'dietkownikbe'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_23A618FC7FE34F6E9A40B7F2BC6FEE55 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_17A60C099448421A8D72192A7D01ACAE }}
           package: .
