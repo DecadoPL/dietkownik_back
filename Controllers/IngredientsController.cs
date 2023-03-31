@@ -101,7 +101,7 @@ namespace API.Controllers
     [HttpPost("addingredient")]
     public async Task<ActionResult<IngredientDTO>> AddIngredient(IngredientDTO ingredientDTO)
     {
-      if(await ingredientExist(ingredientDTO.Name)) return BadRequest("Ingredient is already in database");    
+      /*if(await ingredientExist(ingredientDTO.Name)) return BadRequest("Ingredient is already in database");    
       var ingrMapper = new MapperConfiguration(cfg => cfg.CreateMap<IngredientDTO, Ingredient>());
       var ingrMapperResult = ingrMapper.CreateMapper().Map<Ingredient>(ingredientDTO);
 
@@ -110,13 +110,42 @@ namespace API.Controllers
       }
 
       _context.Ingredients.Add(ingrMapperResult);
+      await _context.SaveChangesAsync();*/
+
+      var ingr = new Ingredient{
+        Brand = ingredientDTO.Brand,
+        Name = ingredientDTO.Name,
+        EAN = ingredientDTO.EAN,
+        PortionQuantity = ingredientDTO.PortionQuantity,
+        PortionTypeId = ingredientDTO.PortionType.Id,
+        Image = ingredientDTO.Image,
+        Description = ingredientDTO.Description,
+        Fat = ingredientDTO.Macro.Fat,
+        Carbohydrates = ingredientDTO.Macro.Carbohydrates,
+        Proteins = ingredientDTO.Macro.Proteins,
+        Cholesterol = ingredientDTO.Macro.Cholesterol,
+        Fibers = ingredientDTO.Macro.Fibers,
+        Kcal = ingredientDTO.Macro.Kcal,
+        Calcium = ingredientDTO.Micro.Calcium,
+        Iron = ingredientDTO.Micro.Iron,
+        Magnesium = ingredientDTO.Micro.Magnesium,
+        Potassium = ingredientDTO.Micro.Potassium,
+        Sodium = ingredientDTO.Micro.Sodium,
+        VitaminA = ingredientDTO.Micro.VitaminA,
+        VitaminB12 = ingredientDTO.Micro.VitaminB12,
+        VitaminB6 = ingredientDTO.Micro.VitaminB6,
+        VitaminC = ingredientDTO.Micro.VitaminC,
+        VitaminD = ingredientDTO.Micro.VitaminD
+      };
+
+      _context.Ingredients.Add(ingr);
       await _context.SaveChangesAsync();
 
       foreach(TagReadDTO tag in ingredientDTO.Tags){
 
         var t = new Tag{
           Id = 0,
-          ItemId = ingrMapperResult.Id, 
+          ItemId = ingr.Id, 
           TableId = tagsTableId, 
           NameId = _context.TagNames
             .Where(tn => tn.Name == tag.Name)
