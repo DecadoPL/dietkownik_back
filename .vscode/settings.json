@@ -1,5 +1,23 @@
 {
   "appService.preDeployTask": "publish-release",
   "appService.deploySubpath": "bin\\Release\\net7.0\\publish",
-  "appService.defaultWebAppToDeploy": "/subscriptions/ff6d919e-f0c0-41df-acf2-7472b054681d/resourceGroups/dietk/providers/Microsoft.Web/sites/dietkownikbe"
+  "appService.defaultWebAppToDeploy": "/subscriptions/ff6d919e-f0c0-41df-acf2-7472b054681d/resourceGroups/dietk/providers/Microsoft.Web/sites/dietkownikbe",
+  "terminal.integrated.profiles.windows": {
+
+    "PowerShell": {
+        "source": "PowerShell",
+        "icon": "terminal-powershell",
+        "args": [
+            "-NoExit", "-Command", "dotnet watch run"
+        ]
+    },
+    "Command Prompt": {
+        "path": [
+            "${env:windir}\\Sysnative\\cmd.exe",
+            "${env:windir}\\System32\\cmd.exe"
+        ],
+        "args": [],
+        "icon": "terminal-cmd"
+    },
+
 }

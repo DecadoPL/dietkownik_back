@@ -138,6 +138,9 @@ namespace API.Controllers
                     .Select(i => i.Name)
                     .FirstOrDefault()
                 }).ToList(),
+              Hours = _context.DietRequirementsHours
+              .Where(x => x.DietRequirementsId == dr.Id)
+              .Select(x => x.Hour).ToList()
             }).FirstOrDefault(),
           Tags = _context.Tags
             .Where(t => t.TableId == tagsTableId)
@@ -338,9 +341,9 @@ namespace API.Controllers
           var dishToAdd = new DietDish
           {      
             DietDayId =  days[i].Id,
-            DishId = day.Dishes[i].DishId,
-            DishTime = day.Dishes[i].Time,
-            Quantity = day.Dishes[i].Quantity   
+            DishId = day.Dishes[j].DishId,
+            DishTime = day.Dishes[j].Time,
+            Quantity = day.Dishes[j].Quantity   
           };
           _context.DietDishes.Add(dishToAdd);         
         }

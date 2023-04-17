@@ -101,16 +101,6 @@ namespace API.Controllers
     [HttpPost("addingredient")]
     public async Task<ActionResult<IngredientDTO>> AddIngredient(IngredientDTO ingredientDTO)
     {
-      /*if(await ingredientExist(ingredientDTO.Name)) return BadRequest("Ingredient is already in database");    
-      var ingrMapper = new MapperConfiguration(cfg => cfg.CreateMap<IngredientDTO, Ingredient>());
-      var ingrMapperResult = ingrMapper.CreateMapper().Map<Ingredient>(ingredientDTO);
-
-      if (ingrMapperResult == null) {
-        return BadRequest("Error mapping DTO to entity");
-      }
-
-      _context.Ingredients.Add(ingrMapperResult);
-      await _context.SaveChangesAsync();*/
 
       var ingr = new Ingredient{
         Brand = ingredientDTO.Brand,

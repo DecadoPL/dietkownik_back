@@ -31,6 +31,7 @@ namespace API.Data
     public DbSet<DietDay> DietDays { get; set; }
     public DbSet<RequiredTag> RequiredTags { get; set; }
     public DbSet<ProhibitedTag> ProhibitedTags { get; set; }
+    public DbSet<DietRequirementsHour> DietRequirementsHours { get; set; }
 
 
   }

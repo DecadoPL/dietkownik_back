@@ -107,6 +107,10 @@ namespace API.Controllers
                 .Select(tn => tn.Name)
                 .FirstOrDefault()    
             }).ToList(),
+          Hours = _context.DietRequirementsHours
+            .Where(x => x.DietRequirementsId == i.Id)
+            .Select(x => x.Hour).ToList()
+          
         });
   
       return Ok(drQuery.FirstOrDefault());
@@ -298,6 +302,35 @@ namespace API.Controllers
 
 
 
+
+
+      var hours = _context.DietRequirementsHours
+        .Where(x=> x.DietRequirementsId == dietReq.Id)
+        .ToList();
+      
+        _context.DietRequirementsHours.RemoveRange(hours);
+      
+
+      for(int i =0; i< dietRequirementsDTO.Hours.Count(); i++)
+      {
+        var hour = dietRequirementsDTO.Hours[i];
+
+
+            var HourToAdd = new DietRequirementsHour
+            {
+              DietRequirementsId = dietReq.Id,
+              Hour = hour
+            };
+            _context.DietRequirementsHours.Add(HourToAdd);
+      }
+      
+
+
+
+
+
+
+
       _context.DietRequirements.Update(dietReq);
       await _context.SaveChangesAsync();
 
@@ -387,6 +420,18 @@ namespace API.Controllers
         }   
       }
 
+      if (dietRequirementsDTO.Hours != null && dietRequirementsDTO.Hours.Count > 0)
+      {
+        foreach(string hour in dietRequirementsDTO.Hours){
+          var i = new DietRequirementsHour{
+            Id = 0,
+            DietRequirementsId = savedDietRequirements.Id,
+            Hour = hour
+          };
+          _context.DietRequirementsHours.Add(i);
+        }   
+      }
+
       await _context.SaveChangesAsync();
 
       return Ok(dietRequirementsDTO);
@@ -413,6 +458,10 @@ namespace API.Controllers
 
       var pt = _context.ProhibitedTags.Where(x=> x.DietRequirementsId == dr.Id);
       _context.ProhibitedTags.RemoveRange(pt);
+      _context.SaveChanges();
+
+      var h = _context.DietRequirementsHours.Where(x=> x.DietRequirementsId == dr.Id);
+      _context.DietRequirementsHours.RemoveRange(h);
       _context.SaveChanges();
 
       _context.DietRequirements.Remove(dr);

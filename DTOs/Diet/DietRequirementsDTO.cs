@@ -16,6 +16,7 @@ namespace API.DTOs
     public List<ProhibitedTagDTO> ProhibitedTags { get; set; }
     public List<ProhibitedIngredientDTO> ProhibitedIngredients { get; set; }
     public List<RequiredIngredientDTO> RequiredIngredients { get; set; }
+    public List<string> Hours { get; set; }
 
   }
 }
