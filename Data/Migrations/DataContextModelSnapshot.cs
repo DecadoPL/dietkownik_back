@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace API.Data.Migrations
+namespace dietkownik_backend.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
     partial class DataContextModelSnapshot : ModelSnapshot
@@ -160,6 +160,23 @@ namespace API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DietRequirements");
+                });
+
+            modelBuilder.Entity("API.Entities.DietRequirementsHour", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DietRequirementsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Hour")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DietRequirementsHours");
                 });
 
             modelBuilder.Entity("API.Entities.Dish", b =>
@@ -422,6 +439,32 @@ namespace API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RequiredTags");
+                });
+
+            modelBuilder.Entity("API.Entities.ShoppingListItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Checked")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PortionType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Quantity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShoppingListItems");
                 });
 
             modelBuilder.Entity("API.Entities.Tag", b =>

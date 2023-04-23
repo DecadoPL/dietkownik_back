@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
@@ -37,24 +38,26 @@ namespace API.Controllers
 
     [HttpGet("shoppinglist/{id}")]
     public ActionResult<IEnumerable<ShoppingListItemDTO>> GetShoppingList(int id){
+      var culture = CultureInfo.CurrentCulture;
+      var decimalSeparator = culture.NumberFormat.NumberDecimalSeparator;
       var shoppingList = _context.DietDays
         .Where(dd => dd.DietId == id)
-        .SelectMany(dd => _context.DietDishes.Where(d => d.DietDayId == dd.Id))
+        .SelectMany(dd => _context.DietDishes.Where(d => d.DietDayId == dd.Id && d.Quantity.Contains("1/")))
         .SelectMany(dd => _context.DishIngredients.Where(di => di.DishId == dd.DishId))
         .AsEnumerable()
         .GroupBy(di => di.IngredientId)
         .Select(group => new ShoppingListItemDTO {
-            IngredientName = _context.Ingredients.FirstOrDefault(i => i.Id == group.Key) != null ? _context.Ingredients.FirstOrDefault(i => i.Id == group.Key).Name : null,
-            Quantity = group.Sum(item => Convert.ToDouble(item.PortionQuantity)).ToString(),
-            PortionType = _context.Ingredients
-    .Where(i => i.Id == group.Key)
-    .Join(
-        _context.PortionTypes,
-        ingredient => ingredient.PortionTypeId,
-        portionType => portionType.Id,
-        (ingredient, portionType) => portionType.Name
-    )
-    .FirstOrDefault() ?? "na"
+          Name = _context.Ingredients.FirstOrDefault(i => i.Id == group.Key) != null ? _context.Ingredients.FirstOrDefault(i => i.Id == group.Key).Name : null,
+          Quantity = group.Sum(item => Convert.ToDouble(item.PortionQuantity.Replace(".", decimalSeparator, StringComparison.InvariantCulture))).ToString(),
+          PortionType = _context.Ingredients
+            .Where(i => i.Id == group.Key)
+            .Join(
+              _context.PortionTypes,
+              ingredient => ingredient.PortionTypeId,
+              portionType => portionType.Id,
+              (ingredient, portionType) => portionType.Name
+            )
+            .FirstOrDefault() ?? "na"
         })
         .ToArray();
       return Ok(shoppingList);

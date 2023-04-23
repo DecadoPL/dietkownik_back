@@ -32,7 +32,7 @@ namespace API.Data
     public DbSet<RequiredTag> RequiredTags { get; set; }
     public DbSet<ProhibitedTag> ProhibitedTags { get; set; }
     public DbSet<DietRequirementsHour> DietRequirementsHours { get; set; }
-
+    public DbSet<ShoppingListItem> ShoppingListItems { get; set; }
 
   }
 }
