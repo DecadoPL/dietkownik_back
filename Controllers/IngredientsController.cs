@@ -48,17 +48,10 @@ namespace API.Controllers
         .Where(i => i.Id == id)
         .Select( i => new IngredientDTO{
           Id = i.Id,
-          PortionType = _context.PortionTypes
-            .Where(pt => pt.Id == i.PortionTypeId)
-            .Select(pt => new PortionTypeDTO{
-              Id = pt.Id,
-              Name = pt.Name
-            }).FirstOrDefault(),
           Name = i.Name,
           Brand = i.Brand,
           Description = i.Description,
           EAN = i.EAN,
-          PortionQuantity = i.PortionQuantity,
           Image = i.Image,
           Macro = new MacroDTO {
             Kcal = i.Kcal,
@@ -92,6 +85,13 @@ namespace API.Controllers
                 .Where(tn => tn.Id == t.NameId)
                 .Select(tn => tn.Name)
                 .FirstOrDefault()
+            }).ToList(),
+          Portions = _context.IngredientPortions
+            .Where(p => p.IngredientId == i.Id)
+            .Select(p=> new IngredientPortionDTO{
+              Id = p.Id,
+              Name = _context.PortionNames.Where(x=>x.Id==p.PortionNameId).Select(x=>x.Name).SingleOrDefault(),
+              Quantity = p.Quantity
             }).ToList()
         });
   
@@ -106,8 +106,6 @@ namespace API.Controllers
         Brand = ingredientDTO.Brand,
         Name = ingredientDTO.Name,
         EAN = ingredientDTO.EAN,
-        PortionQuantity = ingredientDTO.PortionQuantity,
-        PortionTypeId = ingredientDTO.PortionType.Id,
         Image = ingredientDTO.Image,
         Description = ingredientDTO.Description,
         Fat = ingredientDTO.Macro.Fat,
@@ -132,7 +130,6 @@ namespace API.Controllers
       await _context.SaveChangesAsync();
 
       foreach(TagReadDTO tag in ingredientDTO.Tags){
-
         var t = new Tag{
           Id = 0,
           ItemId = ingr.Id, 
@@ -144,6 +141,17 @@ namespace API.Controllers
         };
         _context.Tags.Add(t);
       }
+
+      foreach(IngredientPortionDTO portion in ingredientDTO.Portions){
+        var p = new IngredientPortion{
+          Id = 0,
+          PortionNameId = _context.PortionNames.Where(x=>x.Name==portion.Name).Select(x=> x.Id).SingleOrDefault(),
+          IngredientId = ingr.Id,
+          Quantity = portion.Quantity
+        };
+        _context.IngredientPortions.Add(p);
+      }
+
       await _context.SaveChangesAsync();
       return Ok(ingredientDTO);
     }
@@ -156,12 +164,10 @@ public IngredientDTO UpdateIngredient(IngredientDTO ingredientDTO)
     if (ingr != null)
     {
         // Update ingredient properties
-        ingr.PortionTypeId = ingredientDTO.PortionType.Id;
         ingr.Name = ingredientDTO.Name;
         ingr.Brand = ingredientDTO.Brand;
         ingr.Description = ingredientDTO.Description;
         ingr.EAN = ingredientDTO.EAN;
-        ingr.PortionQuantity = ingredientDTO.PortionQuantity;
         ingr.Image = ingredientDTO.Image;
         ingr.Kcal = ingredientDTO.Macro.Kcal;
         ingr.Carbohydrates = ingredientDTO.Macro.Carbohydrates;
@@ -227,6 +233,44 @@ public IngredientDTO UpdateIngredient(IngredientDTO ingredientDTO)
             }
         }
 
+
+
+        var contextIngrPortions = _context.IngredientPortions
+            .Where(x => x.IngredientId == ingredientDTO.Id)
+            .ToList();
+
+
+        if (ingredientDTO.Portions.Count() < contextIngrPortions.Count())
+        {
+            var portionsToDelete = contextIngrPortions.Skip(ingredientDTO.Portions.Count()).ToList();
+            _context.IngredientPortions.RemoveRange(portionsToDelete);
+        }
+
+        for (int i = 0; i < ingredientDTO.Portions.Count(); i++)
+        {
+            var portion = ingredientDTO.Portions[i];
+            
+            if (i < contextIngrPortions.Count()) 
+            {
+                if (contextIngrPortions[i].Quantity != portion.Quantity)
+                {
+                    contextIngrPortions[i].Quantity = portion.Quantity;
+                    _context.IngredientPortions.Update(contextIngrPortions[i]);
+                }
+            }
+            else
+            {
+                var portionToAdd = new IngredientPortion
+                {
+                  Id = portion.Id,
+                  IngredientId = ingredientDTO.Id,
+                  PortionNameId = _context.PortionNames.Where(x=>x.Name==portion.Name).Select(x=> x.Id).SingleOrDefault(),
+                  Quantity = portion.Quantity
+                };
+                _context.IngredientPortions.Add(portionToAdd);
+            }
+        }
+
         _context.Update(ingr);
         _context.SaveChanges();
     }
@@ -245,6 +289,10 @@ public IngredientDTO UpdateIngredient(IngredientDTO ingredientDTO)
 
       var dishIngredients = _context.DishIngredients.Where(i=>i.IngredientId == ingredient.Id);
       _context.DishIngredients.RemoveRange(dishIngredients);
+      _context.SaveChanges();
+
+      var portions = _context.IngredientPortions.Where(i=>i.IngredientId == ingredient.Id);
+      _context.IngredientPortions.RemoveRange(portions);
       _context.SaveChanges();
 
       _context.Ingredients.Remove(ingredient);

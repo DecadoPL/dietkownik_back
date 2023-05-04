@@ -10,7 +10,7 @@ namespace API.DTOs
     public int Id { get; set; }
     public int IngredientId { get; set; }
     public int DishId { get; set; }
-    public int PortionTypeId { get; set; }
-    public string PortionQuantity { get; set; }
+    public int PortionNameId { get; set; }
+    public string Quantity { get; set; }
   }
 }

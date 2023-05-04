@@ -70,14 +70,6 @@ namespace API.Controllers
                   EAN = ingr.EAN,
                   Image = ingr.Image,
                   Name = ingr.Name,
-                  PortionQuantity = ingr.PortionQuantity,
-                  
-                  PortionType = _context.PortionTypes
-                    .Where(pt => pt.Id == ingr.PortionTypeId)
-                    .Select(pt => new PortionTypeDTO{
-                      Id = pt.Id,
-                      Name = pt.Name
-                    }).FirstOrDefault(),
                   Macro = new MacroDTO {
                     Carbohydrates = ingr.Carbohydrates,
                     Cholesterol = ingr.Cholesterol,
@@ -97,16 +89,42 @@ namespace API.Controllers
                     VitaminB6 = ingr.VitaminB6,
                     VitaminC = ingr.VitaminC,
                     VitaminD = ingr.VitaminD
-                  }
-                }).FirstOrDefault(),
+                  },
 
-              PortionType = _context.PortionTypes
-                .Where(pt => pt.Id == di.PortionTypeId)
-                .Select(pt => new PortionTypeDTO{
-                  Id = pt.Id,
-                  Name = pt.Name
-              }).FirstOrDefault(),
-              PortionQuantity = di.PortionQuantity
+                  Tags = _context.Tags
+                    .Where(t => t.TableId == tagsTableId)
+                    .Where(t => t.ItemId == ingr.Id)
+                    .Select(t => new TagReadDTO{
+                      Id = _context.TagNames
+                        .Where(tn => tn.Id == t.NameId)
+                        .Select(tn => tn.Id)
+                        .FirstOrDefault(),
+                      Name = _context.TagNames
+                        .Where(tn => tn.Id == t.NameId)
+                        .Select(tn => tn.Name)
+                        .FirstOrDefault()
+                    }).ToList(),
+                  Portions = _context.IngredientPortions
+                    .Where(p => p.IngredientId == ingr.Id)
+                    .Select(p=> new IngredientPortionDTO{
+                      Id = p.PortionNameId,
+                      Name = _context.PortionNames.Where(x=>x.Id==p.PortionNameId).Select(x=>x.Name).SingleOrDefault(),
+                      Quantity = p.Quantity
+                    }).ToList()
+
+                }).FirstOrDefault(),
+                Portion = _context.DishIngredients
+                  .Where(p => p.IngredientId == di.IngredientId)
+                  .Where(x => x.DishId == di.DishId)
+                  .Select(p => new IngredientPortionDTO{
+                      Id = p.PortionNameId,
+                      Name = _context.PortionNames.Where(x=>x.Id==p.PortionNameId).Select(x=>x.Name).SingleOrDefault(),
+                      Quantity = p.Quantity
+                    }).FirstOrDefault(),
+                Quantity = _context.DishIngredients
+                  .Where(x => x.IngredientId == di.IngredientId)
+                  .Where(x => x.DishId == di.DishId)
+                  .Select(x => x.Quantity).FirstOrDefault()
             }).ToList(),
           Macro = new MacroDTO{
             Proteins = d.Proteins,
@@ -257,11 +275,24 @@ namespace API.Controllers
         {
             var ingr = dishSaveDTO.Ingredients[i];
 
+
+
             if (i < contextDishIngredients.Count()){
+              contextDishIngredients[i].IngredientId = ingr.IngredientId;
+              contextDishIngredients[i].PortionNameId = ingr.PortionNameId;
+              contextDishIngredients[i].Quantity = ingr.Quantity;
               _context.DishIngredients.Update(contextDishIngredients[i]);
             }else{
-              var dishMapperResult = mapper.CreateMapper().Map<DishIngredient>(ingr);
-                _context.DishIngredients.Add(dishMapperResult);
+              var ingrToAdd = new DishIngredient{
+                DishId = ingr.DishId,
+                IngredientId = ingr.IngredientId,
+                PortionNameId = ingr.PortionNameId,
+                Quantity = ingr.Quantity,
+              };
+
+              _context.DishIngredients.Add(ingrToAdd);
+              //var dishMapperResult = mapper.CreateMapper().Map<DishIngredient>(ingr);
+              //  _context.DishIngredients.Add(dishMapperResult);
             }
         }
 

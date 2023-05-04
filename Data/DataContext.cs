@@ -22,7 +22,7 @@ namespace API.Data
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<DishIngredient> DishIngredients { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
-    public DbSet<PortionType> PortionTypes { get; set; }
+    public DbSet<PortionName> PortionNames { get; set; }
     public DbSet<ProhibitedIngredient> ProhibitedIngredients { get; set; }
     public DbSet<RequiredIngredient> RequiredIngredients { get; set; }
     public DbSet<User> Users { get; set; }
@@ -33,6 +33,8 @@ namespace API.Data
     public DbSet<ProhibitedTag> ProhibitedTags { get; set; }
     public DbSet<DietRequirementsHour> DietRequirementsHours { get; set; }
     public DbSet<ShoppingListItem> ShoppingListItems { get; set; }
+    public DbSet<IngredientPortion> IngredientPortions { get; set; }
+    public DbSet<ShoppingList> ShoppingLists { get; set; }
 
   }
 }

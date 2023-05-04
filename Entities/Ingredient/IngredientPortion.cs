@@ -9,7 +9,7 @@ namespace API.Entities
   {
     public int Id { get; set; }
     public int IngredientId { get; set; }
-    public string Name { get; set; }
+    public int PortionNameId { get; set; }
     public string Quantity { get; set; }
 
   }

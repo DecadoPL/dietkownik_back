@@ -268,11 +268,11 @@ namespace dietkownik_backend.Data.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PortionQuantity")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("PortionTypeId")
+                    b.Property<int>("PortionNameId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Quantity")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -324,12 +324,6 @@ namespace dietkownik_backend.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PortionQuantity")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("PortionTypeId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Potassium")
                         .HasColumnType("TEXT");
 
@@ -359,7 +353,27 @@ namespace dietkownik_backend.Data.Migrations
                     b.ToTable("Ingredients");
                 });
 
-            modelBuilder.Entity("API.Entities.PortionType", b =>
+            modelBuilder.Entity("API.Entities.IngredientPortion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PortionNameId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Quantity")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IngredientPortions");
+                });
+
+            modelBuilder.Entity("API.Entities.PortionName", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -370,7 +384,7 @@ namespace dietkownik_backend.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PortionTypes");
+                    b.ToTable("PortionNames");
                 });
 
             modelBuilder.Entity("API.Entities.ProhibitedIngredient", b =>
@@ -441,6 +455,23 @@ namespace dietkownik_backend.Data.Migrations
                     b.ToTable("RequiredTags");
                 });
 
+            modelBuilder.Entity("API.Entities.ShoppingList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShoppingLists");
+                });
+
             modelBuilder.Entity("API.Entities.ShoppingListItem", b =>
                 {
                     b.Property<int>("Id")
@@ -453,13 +484,13 @@ namespace dietkownik_backend.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PortionType")
+                    b.Property<string>("PortionName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Quantity")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("ShoppingListId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

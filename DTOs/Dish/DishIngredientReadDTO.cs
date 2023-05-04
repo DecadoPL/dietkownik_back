@@ -4,7 +4,8 @@ namespace API.DTOs
   {
     public int Id { get; set; }
     public IngredientDTO Ingredient { get; set; }
-    public PortionTypeDTO PortionType { get; set; }
-    public string PortionQuantity { get; set; }
+    public IngredientPortionDTO Portion { get; set; }
+    public string Quantity { get; set; }
+
   }
 }
